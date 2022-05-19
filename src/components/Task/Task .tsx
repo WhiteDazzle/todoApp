@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import "./Task .css"
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 
 export default class Task extends Component {
@@ -7,10 +8,12 @@ export default class Task extends Component {
     render = () => {
         const {label, onDeleted,
                completed, hidden,
-                MarkCompleted}:any = this.props;
+                MarkCompleted, date}:any = this.props;
         let taskClassName = "";
         if(completed) taskClassName += " completed"
         if(hidden) taskClassName += " hidden"
+
+        let PassedTime = formatDistanceToNow(date)
 
         return (
             <li className={taskClassName}>
@@ -20,7 +23,7 @@ export default class Task extends Component {
                            onClick = {MarkCompleted}/>
                     <label className="task__label">
                         <span className="description">{label}</span>
-                        <span className="created">created 17 seconds ago</span>
+                        <span className="created">{PassedTime}</span>
                     </label>
 
                     <button type="button"
