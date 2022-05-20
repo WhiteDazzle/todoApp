@@ -1,29 +1,27 @@
-import React, {Component} from "react";
+import React, { Component } from 'react'
 
-import "./NewTaskForm.css"
+import './NewTaskForm.css';
 
-
-interface  NewTaskFormProps {
-    createNewTask: (label:string) => void
+interface NewTaskFormProps {
+  onCreateNewTask: (label: string) => void;
 }
-
 
 export default class NewTaskForm extends Component<NewTaskFormProps> {
+  submitNewTask = (e: any) => {
+    e.preventDefault();
+    this.props.onCreateNewTask(e.target.newTaskLabel.value);
+    e.target.newTaskLabel.value = ''
+  }
 
-    submitNewTask = (e:any) => {
-        e.preventDefault()
-        this.props.createNewTask(e.target.value)
-    }
-
-    render = () =>{
-        return (
-            <form onSubmit={this.submitNewTask}>
-            <input className="todoapp__input-text todoapp__input-text--new-todo"
-                   placeholder="What needs to be done?"/>
-            </form>
-        )
-    }
-
+  render = () => {
+    return (
+      <form onSubmit={this.submitNewTask} name="newTaskForm">
+        <input
+          className="new-todo"
+          name="newTaskLabel"
+          placeholder="What needs to be done?"
+        />
+      </form>
+    );
+  };
 }
-
-

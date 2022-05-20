@@ -1,44 +1,59 @@
-import React, {Component} from "react";
-import "./Task .css"
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import React, { Component } from 'react'
+import './Task .css';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+
+interface Props {
+  EditTask: (id:number, label: string) => void;
+  id:number
+}
+
+export default class Task extends Component<Props> {
+
+  onSubmitTask = (e: any) => {
+    e.preventDefault();
+    const newLabel = e.target.EditTaskLabel.value
+    this.props.EditTask(this.props.id, newLabel)
+
+  }
+
+  render = () => {
+    const { label, onDeleted, onEditTask, completed, hidden, MarkCompleted, date, edit}: any = this.props;
+    let taskClassName = 'task'
+    taskClassName += edit? ` editing` : ` view`
+    if (completed) taskClassName += ' completed'
+    if (hidden) taskClassName += ' hidden';
 
 
-export default class Task extends Component {
+    const PassedTime = formatDistanceToNow(date);
 
-    render = () => {
-        const {label, onDeleted,
-               completed, hidden,
-                MarkCompleted, date}:any = this.props;
-        let taskClassName = "";
-        if(completed) taskClassName += " completed"
-        if(hidden) taskClassName += " hidden"
+    return (
+      <li className={taskClassName}>
+        <div className="view">
+          <input className="toggle"
+                 type="checkbox" onClick={MarkCompleted} />
+          <label>
+            <span className="description">{label}</span>
+            <span className="created">{PassedTime}</span>
+          </label>
 
-        let PassedTime = formatDistanceToNow(date)
+          <button type="button"
+                  className="icon icon-edit"
+                  onClick={onEditTask}></button>
 
-        return (
-            <li className={taskClassName}>
-                <div className="view">
-                    <input className="toggle"
-                           type="checkbox"
-                           onClick = {MarkCompleted}/>
-                    <label className="task__label">
-                        <span className="description">{label}</span>
-                        <span className="created">{PassedTime}</span>
-                    </label>
+          <button type="button"
+                  className="icon icon-destroy"
+                  onClick={onDeleted}></button>
+        </div>
 
-                    <button type="button"
-                            className="icon icon-edit">
-                    </button>
+        <form name="EditTaskForm"
+        onSubmit={this.onSubmitTask}>
+          <input type="text"
+                 name="EditTaskLabel"
+                 className="edit"
+                 placeholder={label}/>
+        </form>
 
-                    <button type="button"
-                            className="icon icon-destroy"
-                            onClick={onDeleted}>
-                    </button>
-                </div>
-
-                <input type="text" className="todoapp__input-text"/>
-
-            </li>
-        )
-    }
+      </li>
+    );
+  };
 }
