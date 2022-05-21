@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-import Task from '../Task/Task '
+import Task from '../Task/Task ';
 import './TaskList.css';
 
 const TaskList = ({
@@ -8,29 +8,28 @@ const TaskList = ({
   onDeleted,
   MarkCompleted,
   onEditTask,
-   EditTask
+  EditTask,
 }: {
-  todos: Array<object>;
+  todos: Array<{ id: number; label: string }>;
   onDeleted: (id: number) => void;
   MarkCompleted: (id: number) => void;
   onEditTask: (id: number) => void;
   EditTask: (id: number, label: string) => void;
-
 }) => {
-  const todoListItems = todos.map((item: any) => {
+  const todoListItems = todos.map((item) => {
     return (
-      <Task {...item} key={item.id}
-            onDeleted={() => onDeleted(item.id)}
-            MarkCompleted={() => MarkCompleted(item.id)}
-            onEditTask={() => onEditTask(item.id)}
-            EditTask={(id:number, label:string) => EditTask(id, label)}
-
-            />
-
+      <Task
+        {...item}
+        key={item.id}
+        onDeleted={() => onDeleted(item.id)}
+        MarkCompleted={() => MarkCompleted(item.id)}
+        onEditTask={() => onEditTask(item.id)}
+        EditTask={(id: number, label: string) => EditTask(id, label)}
+      />
     );
-  })
+  });
 
   return <ul className="todo-list">{todoListItems}</ul>;
-}
+};
 
 export default TaskList;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import './TasksFilter.css';
 
@@ -11,13 +11,19 @@ interface Props {
 
 export default class TasksFilter extends Component<Props> {
   render = () => {
-    let ButtonAllClassName = ''
-    let ButtonActiveClassName = ''
-    let ButtonDoneClassName = ''
+    let ButtonAllClassName = '';
+    let ButtonActiveClassName = '';
+    let ButtonDoneClassName = '';
 
-    if (this.props.filterStatus === 'all') ButtonAllClassName += 'selected'
-    if (this.props.filterStatus === 'active') ButtonDoneClassName += 'selected'
-    if (this.props.filterStatus === 'done') ButtonActiveClassName += 'selected'
+    if (this.props.filterStatus === 'all') {
+      ButtonAllClassName += 'selected';
+    }
+    if (this.props.filterStatus === 'active') {
+      ButtonDoneClassName += 'selected';
+    }
+    if (this.props.filterStatus === 'done') {
+      ButtonActiveClassName += 'selected';
+    }
 
     return (
       <ul className="filters">

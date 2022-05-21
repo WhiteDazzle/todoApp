@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import TasksFilter from '../TasksFilter';
+
+import './footer.css';
 
 interface Props {
   onFilterAll: () => void;
