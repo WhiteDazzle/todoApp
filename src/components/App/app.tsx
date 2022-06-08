@@ -28,7 +28,7 @@ export default class App extends Component {
   };
 
   createNewTask = (label: string): void => {
-    if (/^\s+$/.test(label)) return;
+    if (/^\s+$/.test(label) || !label) return;
     const thisId = this.state.maxId;
     const newArr = [
       ...this.state.todoData.slice(0),
@@ -62,7 +62,7 @@ export default class App extends Component {
   EditTask = (id: number, label: string): void => {
     const idx: number = this.state.todoData.findIndex((el) => el.id === id);
     const oldTask = this.state.todoData[idx];
-    if (/^\s+$/.test(label)) return;
+    if (/^\s+$/.test(label) || !label) return;
     const newTask = { ...oldTask, label: label };
     const newArr = [...this.state.todoData.slice(0, idx), newTask, ...this.state.todoData.slice(idx + 1)];
     this.setState({
