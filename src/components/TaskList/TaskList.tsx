@@ -17,9 +17,9 @@ const TaskList = ({
   filterStatus: string;
 }) => {
   const filterTodos = todos.filter((elem) => {
-    if (filterStatus === 'all') return true;
     if (filterStatus === 'active') return !elem.completed;
     if (filterStatus === 'done') return elem.completed;
+    return true;
   });
   const todoListItems = filterTodos.map((item) => {
     return (

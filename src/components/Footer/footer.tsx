@@ -13,13 +13,14 @@ interface Props {
 
 export default class Footer extends Component<Props> {
   render = () => {
+    const { doneCount, onFilter, filterStatus, ClearCompleted } = this.props;
     return (
       <footer className="footer">
-        <span className="todo-count">{this.props.doneCount} items left</span>
+        <span className="todo-count">{doneCount} items left</span>
 
-        <TasksFilter onFilter={this.props.onFilter} filterStatus={this.props.filterStatus} />
+        <TasksFilter onFilter={onFilter} filterStatus={filterStatus} />
 
-        <button className="clear-completed" onClick={() => this.props.ClearCompleted()}>
+        <button className="clear-completed" onClick={() => ClearCompleted()}>
           Clear completed
         </button>
       </footer>
