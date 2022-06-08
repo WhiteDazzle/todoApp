@@ -7,23 +7,28 @@ const TaskList = ({
   todos,
   onDeleted,
   MarkCompleted,
-  onEditTask,
   EditTask,
+  filterStatus,
 }: {
-  todos: Array<{ id: number; label: string }>;
+  todos: Array<{ id: number; label: string; completed: boolean }>;
   onDeleted: (id: number) => void;
   MarkCompleted: (id: number) => void;
-  onEditTask: (id: number) => void;
   EditTask: (id: number, label: string) => void;
+  filterStatus: string;
 }) => {
-  const todoListItems = todos.map((item) => {
+  const filterTodos = todos.filter((elem) => {
+    if (filterStatus === 'all') return true;
+    if (filterStatus === 'active') return !elem.completed;
+    if (filterStatus === 'done') return elem.completed;
+  });
+  const todoListItems = filterTodos.map((item) => {
     return (
       <Task
         {...item}
+        completed={item.completed}
         key={item.id}
         onDeleted={() => onDeleted(item.id)}
         MarkCompleted={() => MarkCompleted(item.id)}
-        onEditTask={() => onEditTask(item.id)}
         EditTask={(id: number, label: string) => EditTask(id, label)}
       />
     );

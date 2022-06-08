@@ -3,42 +3,35 @@ import React, { Component } from 'react';
 import './TasksFilter.css';
 
 interface Props {
-  onFilterAll: () => void;
-  onFilterDone: () => void;
-  onFilterActive: () => void;
+  onFilter: (filter: string) => void;
   filterStatus: string;
 }
 
 export default class TasksFilter extends Component<Props> {
   render = () => {
-    let ButtonAllClassName = '';
-    let ButtonActiveClassName = '';
-    let ButtonDoneClassName = '';
-
-    if (this.props.filterStatus === 'all') {
-      ButtonAllClassName += 'selected';
-    }
-    if (this.props.filterStatus === 'active') {
-      ButtonDoneClassName += 'selected';
-    }
-    if (this.props.filterStatus === 'done') {
-      ButtonActiveClassName += 'selected';
-    }
-
+    const { onFilter, filterStatus } = this.props;
     return (
       <ul className="filters">
         <li>
-          <button type="button" className={ButtonAllClassName} onClick={this.props.onFilterAll}>
+          <button type="button" className={filterStatus === 'all' ? 'selected' : ''} onClick={() => onFilter('all')}>
             All
           </button>
         </li>
         <li>
-          <button type="button" className={ButtonActiveClassName} onClick={this.props.onFilterDone}>
+          <button
+            type="button"
+            className={filterStatus === 'active' ? 'selected' : ''}
+            onClick={() => onFilter('active')}
+          >
             Active
           </button>
         </li>
         <li>
-          <button type="button" className={ButtonDoneClassName} onClick={this.props.onFilterActive}>
+          <button
+            type="button"
+            className={filterStatus === 'done' ? 'selected' : ''}
+            onClick={() => this.props.onFilter('done')}
+          >
             Done
           </button>
         </li>

@@ -5,9 +5,7 @@ import TasksFilter from '../TasksFilter';
 import './footer.css';
 
 interface Props {
-  onFilterAll: () => void;
-  onFilterDone: () => void;
-  onFilterActive: () => void;
+  onFilter: (filter: string) => void;
   ClearCompleted: () => void;
   doneCount: number;
   filterStatus: string;
@@ -19,12 +17,7 @@ export default class Footer extends Component<Props> {
       <footer className="footer">
         <span className="todo-count">{this.props.doneCount} items left</span>
 
-        <TasksFilter
-          onFilterAll={this.props.onFilterAll}
-          onFilterDone={this.props.onFilterDone}
-          onFilterActive={this.props.onFilterActive}
-          filterStatus={this.props.filterStatus}
-        />
+        <TasksFilter onFilter={this.props.onFilter} filterStatus={this.props.filterStatus} />
 
         <button className="clear-completed" onClick={() => this.props.ClearCompleted()}>
           Clear completed

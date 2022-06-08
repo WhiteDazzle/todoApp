@@ -4,23 +4,38 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 interface Props {
   onDeleted: (id: number) => void;
-  onEditTask: (id: number) => void;
   EditTask: (id: number, label: string) => void;
   MarkCompleted: () => void;
   id: number;
+  completed: boolean;
 }
 
 export default class Task extends Component<Props> {
+  state = {
+    edit: false,
+    editTextValue: '',
+  };
+
   onSubmitTask = (e: any) => {
     e.preventDefault();
-    const newLabel = e.target.EditTaskLabel.value;
-    this.props.EditTask(this.props.id, newLabel);
+    this.props.EditTask(this.props.id, this.state.editTextValue);
+    this.setState({ edit: false });
+  };
+
+  onEditTask = (): void => {
+    this.setState({ edit: true });
+  };
+
+  onChangeEditTask = (value: string): void => {
+    this.setState({
+      editTextValue: value,
+    });
   };
 
   render = () => {
-    const { label, onDeleted, onEditTask, completed, hidden, MarkCompleted, date, edit }: any = this.props;
+    const { label, onDeleted, completed, hidden, MarkCompleted, date }: any = this.props;
     let taskClassName = 'task';
-    taskClassName += edit ? ' editing' : ' view';
+    taskClassName += this.state.edit ? ' editing' : ' view';
     if (completed) {
       taskClassName += ' completed';
     }
@@ -33,19 +48,26 @@ export default class Task extends Component<Props> {
     return (
       <li className={taskClassName}>
         <div className="view">
-          <input className="toggle" type="checkbox" onClick={MarkCompleted} />
+          <input className="toggle" type="checkbox" onChange={MarkCompleted} checked={completed} />
           <label>
             <span className="description">{label}</span>
             <span className="created">{PassedTime}</span>
           </label>
 
-          <button type="button" className="icon icon-edit" onClick={onEditTask}></button>
+          <button type="button" className="icon icon-edit" onClick={this.onEditTask}></button>
 
           <button type="button" className="icon icon-destroy" onClick={onDeleted}></button>
         </div>
 
         <form name="EditTaskForm" onSubmit={this.onSubmitTask}>
-          <input type="text" name="EditTaskLabel" className="edit" placeholder={label} />
+          <input
+            type="text"
+            name="EditTaskLabel"
+            className="edit"
+            placeholder={label}
+            value={this.state.editTextValue}
+            onChange={(e) => this.onChangeEditTask(e.target.value)}
+          />
         </form>
       </li>
     );
