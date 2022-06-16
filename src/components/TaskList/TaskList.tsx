@@ -9,12 +9,14 @@ const TaskList = ({
   MarkCompleted,
   EditTask,
   filterStatus,
+  taskTimer,
 }: {
-  todos: Array<{ id: number; label: string; completed: boolean }>;
+  todos: Array<{ id: number; label: string; completed: boolean; taskTime: number; taskTimerId: number }>;
   onDeleted: (id: number) => void;
   MarkCompleted: (id: number) => void;
   EditTask: (id: number, label: string) => void;
   filterStatus: string;
+  taskTimer: (id: number, timerStatus: boolean) => void;
 }) => {
   const filterTodos = todos.filter((elem) => {
     if (filterStatus === 'active') return !elem.completed;
@@ -30,6 +32,9 @@ const TaskList = ({
         onDeleted={() => onDeleted(item.id)}
         MarkCompleted={() => MarkCompleted(item.id)}
         EditTask={(id: number, label: string) => EditTask(id, label)}
+        taskTimer={(id: number, timerStatus: boolean) => taskTimer(id, timerStatus)}
+        taskTime={item.taskTime}
+        taskTimerId={item.taskTimerId}
       />
     );
   });

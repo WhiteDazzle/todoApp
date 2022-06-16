@@ -8,13 +8,25 @@ interface Props {
   MarkCompleted: () => void;
   id: number;
   completed: boolean;
+  taskTimer: (id: number, timerStatus: boolean) => void;
+  taskTime: number;
+  taskTimerId: number;
+}
+
+interface State {
+  edit: boolean;
+  editTextValue: string;
 }
 
 export default class Task extends Component<Props> {
-  state = {
+  state: State = {
     edit: false,
     editTextValue: '',
   };
+
+  componentWillUnmount() {
+    clearInterval(this.props.taskTimerId);
+  }
 
   onSubmitTask = (e: any) => {
     e.preventDefault();
@@ -26,6 +38,10 @@ export default class Task extends Component<Props> {
     this.setState({ edit: true });
   };
 
+  onTaskTimer = (status: boolean): void => {
+    this.props.taskTimer(this.props.id, status);
+  };
+
   onChangeEditTask = (value: string): void => {
     this.setState({
       editTextValue: value,
@@ -33,6 +49,7 @@ export default class Task extends Component<Props> {
   };
 
   render = () => {
+    const taskTime = `${Math.floor(this.props.taskTime / 60)}:${this.props.taskTime % 60}`;
     const { label, onDeleted, completed, hidden, MarkCompleted, date }: any = this.props;
     let taskClassName = 'task';
     taskClassName += this.state.edit ? ' editing' : ' view';
@@ -51,6 +68,11 @@ export default class Task extends Component<Props> {
           <input className="toggle" type="checkbox" onChange={MarkCompleted} checked={completed} />
           <label>
             <span className="description">{label}</span>
+            <span className="task__timer-group">
+              <button className="icon-play" onClick={() => this.onTaskTimer(true)}></button>
+              <button className="icon-pause" onClick={() => this.onTaskTimer(false)}></button>
+              <span className="task__timer-counter"> {taskTime}</span>
+            </span>
             <span className="created">{PassedTime}</span>
           </label>
 

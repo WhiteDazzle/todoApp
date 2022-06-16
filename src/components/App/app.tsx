@@ -15,9 +15,11 @@ interface State {
 interface TodoDataTask {
   label: string;
   id: number;
+  taskTime: number;
   hidden: boolean;
   completed: boolean;
   date: number;
+  taskTimerId: any;
 }
 
 export default class App extends Component {
@@ -27,12 +29,46 @@ export default class App extends Component {
     maxId: 1,
   };
 
+  componentDidMount() {
+    this.createNewTask('drink coffee');
+  }
+
+  setChangedTask = (ChangedTask: TodoDataTask, index: number): void => {
+    const newArr = [...this.state.todoData.slice(0, index), ChangedTask, ...this.state.todoData.slice(index + 1)];
+    this.setState({
+      todoData: newArr,
+    });
+  };
+
+  taskTimer = (id: number, timerStatus: boolean): void => {
+    const idx: number = this.state.todoData.findIndex((el) => el.id === id);
+    const oldTask = this.state.todoData[idx];
+    if (!timerStatus) {
+      clearInterval(oldTask.taskTimerId);
+      const newTask = { ...oldTask, taskTimerId: 0 };
+      this.setChangedTask(newTask, idx);
+      return;
+    }
+    if (oldTask.taskTimerId) return;
+    const taskTimerId = setInterval(this.addSecondToTaskTimer, 1000, id);
+    const newTask = { ...oldTask, taskTimerId: taskTimerId };
+    this.setChangedTask(newTask, idx);
+  };
+
+  addSecondToTaskTimer = (id: number) => {
+    const idx: number = this.state.todoData.findIndex((el) => el.id === id);
+    const oldTask = this.state.todoData[idx];
+    const taskTime = oldTask.taskTime + 1;
+    const newTask = { ...oldTask, taskTime: taskTime };
+    this.setChangedTask(newTask, idx);
+  };
+
   createNewTask = (label: string): void => {
     if (/^\s+$/.test(label) || !label) return;
     const thisId = this.state.maxId;
     const newArr = [
       ...this.state.todoData.slice(0),
-      { label: label, id: this.state.maxId, hidden: false, completed: false, date: Date.now() },
+      { label: label, id: this.state.maxId, hidden: false, completed: false, date: Date.now(), taskTime: 0 },
     ];
     this.setState({
       todoData: newArr,
@@ -52,11 +88,7 @@ export default class App extends Component {
     const idx: number = this.state.todoData.findIndex((el) => el.id === id);
     const oldTask = this.state.todoData[idx];
     const newTask = { ...oldTask, completed: !oldTask.completed };
-
-    const newArr = [...this.state.todoData.slice(0, idx), newTask, ...this.state.todoData.slice(idx + 1)];
-    this.setState({
-      todoData: newArr,
-    });
+    this.setChangedTask(newTask, idx);
   };
 
   EditTask = (id: number, label: string): void => {
@@ -64,10 +96,7 @@ export default class App extends Component {
     const oldTask = this.state.todoData[idx];
     if (/^\s+$/.test(label) || !label) return;
     const newTask = { ...oldTask, label: label };
-    const newArr = [...this.state.todoData.slice(0, idx), newTask, ...this.state.todoData.slice(idx + 1)];
-    this.setState({
-      todoData: newArr,
-    });
+    this.setChangedTask(newTask, idx);
   };
 
   onFilter = (filter: string): void => {
@@ -106,6 +135,7 @@ export default class App extends Component {
             onDeleted={(id: number) => this.deleteTask(id)}
             EditTask={(id: number, label: string) => this.EditTask(id, label)}
             filterStatus={this.state.filterStatus}
+            taskTimer={(id: number, timerStatus: boolean) => this.taskTimer(id, timerStatus)}
           />
 
           <Footer
