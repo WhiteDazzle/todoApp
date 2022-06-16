@@ -24,10 +24,6 @@ export default class Task extends Component<Props> {
     editTextValue: '',
   };
 
-  componentWillUnmount() {
-    clearInterval(this.props.taskTimerId);
-  }
-
   onSubmitTask = (e: any) => {
     e.preventDefault();
     this.props.EditTask(this.props.id, this.state.editTextValue);

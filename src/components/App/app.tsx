@@ -78,6 +78,7 @@ export default class App extends Component {
 
   deleteTask = (id: number): void => {
     const idx: number = this.state.todoData.findIndex((el) => el.id === id);
+    clearInterval(this.state.todoData[idx].taskTimerId);
     const newArr = [...this.state.todoData.slice(0, idx), ...this.state.todoData.slice(idx + 1)];
     this.setState({
       todoData: newArr,
