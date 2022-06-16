@@ -9,8 +9,9 @@ interface Props {
   id: number;
   completed: boolean;
   taskTimer: (id: number, timerStatus: boolean) => void;
-  taskTime: number;
-  taskTimerId: number;
+  timeStartDoTask: any;
+  nowDate: any;
+  taskTimerStatus: boolean;
 }
 
 interface State {
@@ -44,8 +45,16 @@ export default class Task extends Component<Props> {
     });
   };
 
+  taskTime = () => {
+    if (!this.props.timeStartDoTask) return '0:0';
+    const taskTime = !this.props.taskTimerStatus
+      ? Math.floor(this.props.timeStartDoTask / 1000 + 1)
+      : Math.floor((this.props.nowDate - this.props.timeStartDoTask) / 1000 + 1);
+    return `${Math.floor(taskTime / 60)}:${Math.floor(taskTime % 60)}`;
+  };
+
   render = () => {
-    const taskTime = `${Math.floor(this.props.taskTime / 60)}:${this.props.taskTime % 60}`;
+    const taskTime = `${this.taskTime()}`;
     const { label, onDeleted, completed, hidden, MarkCompleted, date }: any = this.props;
     let taskClassName = 'task';
     taskClassName += this.state.edit ? ' editing' : ' view';

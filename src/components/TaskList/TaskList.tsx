@@ -10,13 +10,15 @@ const TaskList = ({
   EditTask,
   filterStatus,
   taskTimer,
+  nowDate,
 }: {
-  todos: Array<{ id: number; label: string; completed: boolean; taskTime: number; taskTimerId: number }>;
+  todos: Array<{ id: number; label: string; completed: boolean; timeStartDoTask: any; taskTimerStatus: boolean }>;
   onDeleted: (id: number) => void;
   MarkCompleted: (id: number) => void;
   EditTask: (id: number, label: string) => void;
   filterStatus: string;
   taskTimer: (id: number, timerStatus: boolean) => void;
+  nowDate: any;
 }) => {
   const filterTodos = todos.filter((elem) => {
     if (filterStatus === 'active') return !elem.completed;
@@ -33,8 +35,9 @@ const TaskList = ({
         MarkCompleted={() => MarkCompleted(item.id)}
         EditTask={(id: number, label: string) => EditTask(id, label)}
         taskTimer={(id: number, timerStatus: boolean) => taskTimer(id, timerStatus)}
-        taskTime={item.taskTime}
-        taskTimerId={item.taskTimerId}
+        timeStartDoTask={item.timeStartDoTask}
+        nowDate={nowDate}
+        taskTimerStatus={item.taskTimerStatus}
       />
     );
   });

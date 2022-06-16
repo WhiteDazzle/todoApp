@@ -10,16 +10,17 @@ interface State {
   todoData: Array<TodoDataTask>;
   filterStatus: string;
   maxId: number;
+  nowDate: any;
 }
 
 interface TodoDataTask {
   label: string;
   id: number;
-  taskTime: number;
   hidden: boolean;
   completed: boolean;
   date: number;
-  taskTimerId: any;
+  taskTimerStatus: boolean;
+  timeStartDoTask: any;
 }
 
 export default class App extends Component {
@@ -27,9 +28,11 @@ export default class App extends Component {
     todoData: [],
     filterStatus: 'all',
     maxId: 1,
+    nowDate: new Date(),
   };
 
   componentDidMount() {
+    setInterval(() => this.setState({ nowDate: new Date() }), 1000);
     this.createNewTask('drink coffee');
   }
 
@@ -43,23 +46,11 @@ export default class App extends Component {
   taskTimer = (id: number, timerStatus: boolean): void => {
     const idx: number = this.state.todoData.findIndex((el) => el.id === id);
     const oldTask = this.state.todoData[idx];
-    if (!timerStatus) {
-      clearInterval(oldTask.taskTimerId);
-      const newTask = { ...oldTask, taskTimerId: 0 };
-      this.setChangedTask(newTask, idx);
-      return;
-    }
-    if (oldTask.taskTimerId) return;
-    const taskTimerId = setInterval(this.addSecondToTaskTimer, 1000, id);
-    const newTask = { ...oldTask, taskTimerId: taskTimerId };
-    this.setChangedTask(newTask, idx);
-  };
-
-  addSecondToTaskTimer = (id: number) => {
-    const idx: number = this.state.todoData.findIndex((el) => el.id === id);
-    const oldTask = this.state.todoData[idx];
-    const taskTime = oldTask.taskTime + 1;
-    const newTask = { ...oldTask, taskTime: taskTime };
+    if (timerStatus === oldTask.taskTimerStatus) return;
+    const timeStartDoTask = oldTask.timeStartDoTask
+      ? new Date().valueOf() - oldTask.timeStartDoTask.valueOf()
+      : new Date();
+    const newTask = { ...oldTask, taskTimerStatus: timerStatus, timeStartDoTask: timeStartDoTask };
     this.setChangedTask(newTask, idx);
   };
 
@@ -68,7 +59,7 @@ export default class App extends Component {
     const thisId = this.state.maxId;
     const newArr = [
       ...this.state.todoData.slice(0),
-      { label: label, id: this.state.maxId, hidden: false, completed: false, date: Date.now(), taskTime: 0 },
+      { label: label, id: this.state.maxId, hidden: false, completed: false, date: Date.now(), taskTimerStatus: false },
     ];
     this.setState({
       todoData: newArr,
@@ -78,7 +69,7 @@ export default class App extends Component {
 
   deleteTask = (id: number): void => {
     const idx: number = this.state.todoData.findIndex((el) => el.id === id);
-    clearInterval(this.state.todoData[idx].taskTimerId);
+
     const newArr = [...this.state.todoData.slice(0, idx), ...this.state.todoData.slice(idx + 1)];
     this.setState({
       todoData: newArr,
@@ -137,6 +128,7 @@ export default class App extends Component {
             EditTask={(id: number, label: string) => this.EditTask(id, label)}
             filterStatus={this.state.filterStatus}
             taskTimer={(id: number, timerStatus: boolean) => this.taskTimer(id, timerStatus)}
+            nowDate={this.state.nowDate}
           />
 
           <Footer
