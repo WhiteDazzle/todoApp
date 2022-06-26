@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './Task .css';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
@@ -12,91 +12,91 @@ interface Props {
   timeStartDoTask: any;
   nowDate: any;
   taskTimerStatus: boolean;
+  label: string;
+  hidden: boolean;
+  date: number;
 }
 
-interface State {
-  edit: boolean;
-  editTextValue: string;
-}
-
-export default class Task extends Component<Props> {
-  state: State = {
-    edit: false,
-    editTextValue: '',
-  };
-
-  onSubmitTask = (e: any) => {
+const Task = ({
+  completed,
+  onDeleted,
+  MarkCompleted,
+  EditTask,
+  taskTimer,
+  timeStartDoTask,
+  nowDate,
+  taskTimerStatus,
+  id,
+  label,
+  hidden,
+  date,
+}: Props) => {
+  const PassedTime = formatDistanceToNow(date);
+  const [edit, switchEdit] = useState(false);
+  const [editTitleValue, editTitle] = useState(label);
+  const onSubmitTask = (e: any) => {
     e.preventDefault();
-    this.props.EditTask(this.props.id, this.state.editTextValue);
-    this.setState({ edit: false });
+    EditTask(id, editTitleValue);
+    switchEdit(false);
+  };
+  const handleEditTask = (): void => {
+    switchEdit(true);
   };
 
-  onEditTask = (): void => {
-    this.setState({ edit: true });
+  const switchTaskTimer = (status: boolean): void => {
+    taskTimer(id, status);
   };
 
-  onTaskTimer = (status: boolean): void => {
-    this.props.taskTimer(this.props.id, status);
+  const handleChangeEditTask = (value: string): void => {
+    editTitle(value);
   };
-
-  onChangeEditTask = (value: string): void => {
-    this.setState({
-      editTextValue: value,
-    });
-  };
-
-  taskTime = () => {
-    if (!this.props.timeStartDoTask) return '0:0';
-    const taskTime = !this.props.taskTimerStatus
-      ? Math.floor(this.props.timeStartDoTask / 1000 + 1)
-      : Math.floor((this.props.nowDate - this.props.timeStartDoTask) / 1000 + 1);
+  const taskTimeCount = () => {
+    if (!timeStartDoTask) return '0:0';
+    const taskTime = !taskTimerStatus
+      ? Math.floor(timeStartDoTask / 1000 + 1)
+      : Math.floor((nowDate - timeStartDoTask) / 1000 + 1);
     return `${Math.floor(taskTime / 60)}:${Math.floor(taskTime % 60)}`;
   };
+  let taskClassName = 'task';
+  taskClassName += edit ? ' editing' : ' view';
+  if (completed) {
+    taskClassName += ' completed';
+  }
+  if (hidden) {
+    taskClassName += ' hidden';
+  }
 
-  render = () => {
-    const taskTime = `${this.taskTime()}`;
-    const { label, onDeleted, completed, hidden, MarkCompleted, date }: any = this.props;
-    let taskClassName = 'task';
-    taskClassName += this.state.edit ? ' editing' : ' view';
-    if (completed) {
-      taskClassName += ' completed';
-    }
-    if (hidden) {
-      taskClassName += ' hidden';
-    }
+  return (
+    <li className={taskClassName}>
+      <div className="view">
+        <input className="toggle" type="checkbox" onChange={MarkCompleted} checked={completed} />
+        <label>
+          <span className="description">{label}</span>
+          <span className="task__timer-group">
+            <button className="icon-play" onClick={() => switchTaskTimer(true)}></button>
+            <button className="icon-pause" onClick={() => switchTaskTimer(false)}></button>
+            <span className="task__timer-counter"> {taskTimeCount()}</span>
+          </span>
+          <span className="created">{PassedTime}</span>
+        </label>
 
-    const PassedTime = formatDistanceToNow(date);
+        <button type="button" className="icon icon-edit" onClick={handleEditTask}></button>
 
-    return (
-      <li className={taskClassName}>
-        <div className="view">
-          <input className="toggle" type="checkbox" onChange={MarkCompleted} checked={completed} />
-          <label>
-            <span className="description">{label}</span>
-            <span className="task__timer-group">
-              <button className="icon-play" onClick={() => this.onTaskTimer(true)}></button>
-              <button className="icon-pause" onClick={() => this.onTaskTimer(false)}></button>
-              <span className="task__timer-counter"> {taskTime}</span>
-            </span>
-            <span className="created">{PassedTime}</span>
-          </label>
+        <button type="button" className="icon icon-destroy" onClick={() => onDeleted(id)}></button>
+      </div>
 
-          <button type="button" className="icon icon-edit" onClick={this.onEditTask}></button>
+      <form name="EditTaskForm" onSubmit={onSubmitTask}>
+        <input
+          type="text"
+          name="EditTaskLabel"
+          className="edit"
+          placeholder={label}
+          value={editTitleValue}
+          onChange={(e) => handleChangeEditTask(e.target.value)}
+        />
+      </form>
+    </li>
+  );
+};
 
-          <button type="button" className="icon icon-destroy" onClick={onDeleted}></button>
-        </div>
-
-        <form name="EditTaskForm" onSubmit={this.onSubmitTask}>
-          <input
-            type="text"
-            name="EditTaskLabel"
-            className="edit"
-            placeholder={label}
-            value={this.state.editTextValue}
-            onChange={(e) => this.onChangeEditTask(e.target.value)}
-          />
-        </form>
-      </li>
-    );
-  };
-}
+export default Task;

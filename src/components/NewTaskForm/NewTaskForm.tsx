@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import './NewTaskForm.css';
 
@@ -6,32 +6,27 @@ interface NewTaskFormProps {
   onCreateNewTask: (label: string) => void;
 }
 
-export default class NewTaskForm extends Component<NewTaskFormProps> {
-  state = { inputTextValue: '' };
-
-  submitNewTask = (e: any) => {
+const NewTaskForm = ({ onCreateNewTask }: NewTaskFormProps) => {
+  const [inputTextValue, handleTitleNewTask] = useState('');
+  const submitNewTask = (e: any) => {
     e.preventDefault();
-    this.props.onCreateNewTask(this.state.inputTextValue);
-    this.setState({ inputTextValue: '' });
+    onCreateNewTask(inputTextValue);
+    handleTitleNewTask('');
   };
+  const onChangeNewTask = (value: string): void => {
+    handleTitleNewTask(value);
+  };
+  return (
+    <form onSubmit={submitNewTask} name="newTaskForm">
+      <input
+        className="new-todo"
+        name="newTaskLabel"
+        value={inputTextValue}
+        placeholder="What needs to be done?"
+        onChange={(e) => onChangeNewTask(e.target.value)}
+      />
+    </form>
+  );
+};
 
-  onChangeNewTask = (value: string): void => {
-    this.setState({
-      inputTextValue: value,
-    });
-  };
-
-  render = () => {
-    return (
-      <form onSubmit={this.submitNewTask} name="newTaskForm">
-        <input
-          className="new-todo"
-          name="newTaskLabel"
-          value={this.state.inputTextValue}
-          placeholder="What needs to be done?"
-          onChange={(e) => this.onChangeNewTask(e.target.value)}
-        />
-      </form>
-    );
-  };
-}
+export default NewTaskForm;

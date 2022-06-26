@@ -12,7 +12,15 @@ const TaskList = ({
   taskTimer,
   nowDate,
 }: {
-  todos: Array<{ id: number; label: string; completed: boolean; timeStartDoTask: any; taskTimerStatus: boolean }>;
+  todos: Array<{
+    id: number;
+    label: string;
+    completed: boolean;
+    timeStartDoTask: any;
+    taskTimerStatus: boolean;
+    hidden: boolean;
+    date: number;
+  }>;
   onDeleted: (id: number) => void;
   MarkCompleted: (id: number) => void;
   EditTask: (id: number, label: string) => void;
@@ -29,6 +37,9 @@ const TaskList = ({
     return (
       <Task
         {...item}
+        hidden={item.hidden}
+        label={item.label}
+        id={item.id}
         completed={item.completed}
         key={item.id}
         onDeleted={() => onDeleted(item.id)}
@@ -38,6 +49,7 @@ const TaskList = ({
         timeStartDoTask={item.timeStartDoTask}
         nowDate={nowDate}
         taskTimerStatus={item.taskTimerStatus}
+        date={item.date}
       />
     );
   });
